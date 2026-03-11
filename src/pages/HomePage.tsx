@@ -36,7 +36,7 @@ export default function HomePage() {
       >
         Добро пожаловать на <br/>
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 inline-block hover:scale-105 transition-transform duration-300">
-          Наш Сервер
+          One World
         </span>
       </motion.h1>
 
