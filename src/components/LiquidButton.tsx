@@ -69,7 +69,7 @@ export default function LiquidButton({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          access_key: 'YOUR_WEB3FORMS_ACCESS_KEY',
+          access_key: '6b6c9d34-560e-43a2-93a8-d6579ceadc7a',
           subject: `Новая покупка: ${itemName} от ${nickname}`,
           from_name: 'OneWorld Store',
           message: `Новая заявка на покупку (Monobank)!\n\nНик: ${nickname}\nEmail: ${email}\nТовар: ${itemName}\nЦена: ${price}₽\nПромокод: ${promoCode || 'Нет'}`
