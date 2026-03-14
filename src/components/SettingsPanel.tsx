@@ -33,6 +33,7 @@ export default function SettingsPanel() {
     <>
       <button 
         onClick={handleOpen}
+        onMouseEnter={() => soundManager.play('hover', 0.2)}
         className="fixed bottom-6 right-6 z-50 p-3 bg-white/5 border border-white/10 rounded-full backdrop-blur-md hover:bg-white/10 transition-colors group shadow-lg"
       >
         <Settings className="text-white/70 group-hover:text-white transition-all group-hover:rotate-90 duration-500" />
@@ -104,6 +105,7 @@ export default function SettingsPanel() {
                 </div>
                 <button 
                   onClick={handleOptimize}
+                  onMouseEnter={() => soundManager.play('hover', 0.2)}
                   className="w-full py-2 bg-[var(--theme-main)]/20 hover:bg-[var(--theme-main)]/40 text-[var(--theme-main)] font-bold rounded-lg transition-colors text-sm uppercase tracking-wider"
                 >
                   Максимальная производительность
@@ -127,6 +129,7 @@ function ToggleItem({ icon, title, description, checked, onChange }: any) {
     <div 
       className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors cursor-pointer group" 
       onClick={handleChange}
+      onMouseEnter={() => soundManager.play('hover', 0.1)}
     >
       <div className="flex items-center gap-4">
         <div className="text-[var(--theme-main)] transition-colors duration-500">{icon}</div>

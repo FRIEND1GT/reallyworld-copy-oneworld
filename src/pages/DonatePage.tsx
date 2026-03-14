@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Tag, Sparkles, Star, Shield, Zap, Swords, Flame, Skull, Ghost, Crown, Package, Gift, Box, Coins, Banknote, Gem } from 'lucide-react';
 import LiquidButton from '../components/LiquidButton';
 
+import { soundManager } from '../utils/sound';
+
 const ranks = [
   { name: 'VIP', price: 33, color: 'text-zinc-300', icon: Star, glow: 'group-hover:shadow-[0_0_40px_rgba(212,212,216,0.3)]' },
   { name: 'PREMIUM', price: 66, color: 'text-blue-400', icon: Shield, glow: 'group-hover:shadow-[0_0_40px_rgba(96,165,250,0.3)]' },
@@ -54,12 +56,12 @@ export default function DonatePage() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -30, scale: 0.95 }}
-      transition={{ type: "spring", stiffness: 200, damping: 20 }}
+      initial={{ opacity: 0, y: 50, scale: 0.95, rotateX: -10 }}
+      animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+      exit={{ opacity: 0, y: -50, scale: 0.95, rotateX: 10 }}
+      transition={{ type: "spring", stiffness: 150, damping: 20 }}
       className="w-full max-w-6xl flex flex-col items-center relative z-10 will-change-transform"
-      style={{ transform: 'translate3d(calc(var(--mouse-x, 0) * -0.5px), calc(var(--mouse-y, 0) * -0.5px), 0)', transition: 'transform 0.1s ease-out' }}
+      style={{ perspective: 1000, transform: 'translate3d(calc(var(--mouse-x, 0) * -0.5px), calc(var(--mouse-y, 0) * -0.5px), 0)', transition: 'transform 0.1s ease-out' }}
     >
       <motion.h2 
         animate={{ textShadow: ['0px 0px 0px var(--theme-glow)', '0px 0px 30px var(--theme-glow)', '0px 0px 0px var(--theme-glow)'] }}
@@ -182,7 +184,11 @@ export default function DonatePage() {
 function TabButton({ active, onClick, icon, text }: { active: boolean, onClick: () => void, icon: React.ReactNode, text: string }) {
   return (
     <button
-      onClick={onClick}
+      onClick={() => {
+        soundManager.play('click', 0.5);
+        onClick();
+      }}
+      onMouseEnter={() => !active && soundManager.play('hover', 0.2)}
       className={`relative flex items-center gap-4 px-6 py-4 rounded-xl transition-all duration-500 overflow-hidden group w-full text-left ${
         active 
           ? 'text-white shadow-[0_0_30px_var(--theme-glow)]' 

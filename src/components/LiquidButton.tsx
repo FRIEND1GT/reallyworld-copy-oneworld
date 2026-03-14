@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShoppingCart, Check, X, User, CreditCard, Send, Mail, ArrowRight, Copy } from 'lucide-react';
+import { ShoppingCart, Check, X, User, CreditCard, Send, Mail, ArrowRight, Copy, Shield } from 'lucide-react';
 import { soundManager } from '../utils/sound';
 
 export default function LiquidButton({ 
@@ -18,7 +18,7 @@ export default function LiquidButton({
   const [showModal, setShowModal] = useState(false);
   const [mounted, setMounted] = useState(false);
   
-  const [step, setStep] = useState<number | 'tg_success'>(1);
+  const [step, setStep] = useState<number | 'tg_success'>(0);
   const [nickname, setNickname] = useState('');
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,9 +44,10 @@ export default function LiquidButton({
   };
 
   const handleClose = () => {
+    soundManager.play('cancel', 0.4);
     setShowModal(false);
     setTimeout(() => {
-      setStep(1);
+      setStep(0);
       setNickname('');
       setEmail('');
     }, 300);
@@ -69,7 +70,7 @@ export default function LiquidButton({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          access_key: '6b6c9d34-560e-43a2-93a8-d6579ceadc7a',
+          access_key: 'YOUR_WEB3FORMS_ACCESS_KEY',
           subject: `Новая покупка: ${itemName} от ${nickname}`,
           from_name: 'OneWorld Store',
           message: `Новая заявка на покупку (Monobank)!\n\nНик: ${nickname}\nEmail: ${email}\nТовар: ${itemName}\nЦена: ${price}₽\nПромокод: ${promoCode || 'Нет'}`
@@ -112,6 +113,50 @@ export default function LiquidButton({
             <div className="relative z-10 w-full">
               <AnimatePresence mode="wait">
                 
+                {/* STEP 0: AGREEMENT */}
+                {step === 0 && (
+                  <motion.div key="step0" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex flex-col">
+                    <div className="w-14 h-14 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center justify-center mb-6">
+                      <Shield className="text-amber-500" size={28} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-4">Пользовательское соглашение</h3>
+                    
+                    <div className="bg-white/[0.03] border border-white/10 rounded-xl p-5 mb-6 text-sm text-white/70 space-y-3 max-h-60 overflow-y-auto custom-scrollbar">
+                      <p>
+                        Осуществляя покупку, вы подтверждаете свое полное согласие со следующими условиями (Оферта):
+                      </p>
+                      <ul className="list-disc pl-5 space-y-2">
+                        <li>Все денежные средства, переведенные в рамках данной транзакции, являются добровольным пожертвованием и направляются напрямую создателю сервера на поддержку и развитие проекта.</li>
+                        <li>Цифровые товары, привилегии и внутриигровая валюта предоставляются &quot;как есть&quot;.</li>
+                        <li><strong className="text-red-400 font-semibold">Возврат денежных средств после совершения оплаты не предусмотрен</strong> ни при каких обстоятельствах, включая блокировку аккаунта за нарушение правил сервера, закрытие проекта или утрату доступа к аккаунту.</li>
+                      </ul>
+                      <p>
+                        Нажимая кнопку «Согласен», вы подтверждаете, что ознакомились с данными правилами и принимаете их в полном объеме.
+                      </p>
+                    </div>
+                    
+                    <div className="flex gap-3">
+                      <button 
+                        onClick={handleClose}
+                        onMouseEnter={() => soundManager.play('hover', 0.2)}
+                        className="flex-1 py-4 bg-white/5 hover:bg-white/10 text-white rounded-xl font-bold transition-all flex items-center justify-center"
+                      >
+                        Не согласен
+                      </button>
+                      <button 
+                        onClick={() => {
+                          soundManager.play('success', 0.5);
+                          setStep(1);
+                        }}
+                        onMouseEnter={() => soundManager.play('hover', 0.2)}
+                        className="flex-1 py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black rounded-xl font-bold transition-all flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.2)]"
+                      >
+                        Согласен
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+
                 {/* STEP 1: NICKNAME */}
                 {step === 1 && (
                   <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex flex-col">
@@ -131,7 +176,11 @@ export default function LiquidButton({
                     
                     <button 
                       disabled={!nickname.trim()}
-                      onClick={() => setStep(2)}
+                      onClick={() => {
+                        soundManager.play('click', 0.5);
+                        setStep(2);
+                      }}
+                      onMouseEnter={() => soundManager.play('hover', 0.2)}
                       className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:from-white/5 disabled:to-white/5 disabled:text-white/30 text-black rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(245,158,11,0.2)] disabled:shadow-none"
                     >
                       Далее <ArrowRight size={20} />
@@ -150,7 +199,11 @@ export default function LiquidButton({
                     
                     <div className="flex flex-col gap-4">
                       <button 
-                        onClick={handleTgSubmit}
+                        onClick={() => {
+                          soundManager.play('click', 0.5);
+                          handleTgSubmit();
+                        }}
+                        onMouseEnter={() => soundManager.play('hover', 0.2)}
                         className="w-full p-5 bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-white/10 rounded-2xl flex items-center gap-5 transition-all group"
                       >
                         <div className="w-12 h-12 bg-[#2AABEE] rounded-full flex items-center justify-center text-white">
@@ -163,7 +216,11 @@ export default function LiquidButton({
                       </button>
 
                       <button 
-                        onClick={() => setStep(3)}
+                        onClick={() => {
+                          soundManager.play('click', 0.5);
+                          setStep(3);
+                        }}
+                        onMouseEnter={() => soundManager.play('hover', 0.2)}
                         className="w-full p-5 bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-white/10 rounded-2xl flex items-center gap-5 transition-all group"
                       >
                         <div className="w-12 h-12 bg-zinc-800 rounded-full flex items-center justify-center text-white border border-white/10">
@@ -197,7 +254,11 @@ export default function LiquidButton({
                     
                     <button 
                       disabled={!email.includes('@') || isSubmitting}
-                      onClick={handleMonoSubmit}
+                      onClick={() => {
+                        soundManager.play('click', 0.5);
+                        handleMonoSubmit();
+                      }}
+                      onMouseEnter={() => soundManager.play('hover', 0.2)}
                       className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:from-white/5 disabled:to-white/5 disabled:text-white/30 text-black rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(245,158,11,0.2)] disabled:shadow-none"
                     >
                       {isSubmitting ? 'Отправка...' : 'Далее'} <ArrowRight size={20} />
@@ -221,7 +282,11 @@ export default function LiquidButton({
                         4874 0700 7097 3738
                       </div>
                       <button 
-                        onClick={() => navigator.clipboard.writeText('4874070070973738')}
+                        onClick={() => {
+                          soundManager.play('success', 0.5);
+                          navigator.clipboard.writeText('4874070070973738');
+                        }}
+                        onMouseEnter={() => soundManager.play('hover', 0.2)}
                         className="absolute top-3 right-3 p-2 bg-white/5 hover:bg-white/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
                         title="Скопировать карту"
                       >
@@ -234,7 +299,11 @@ export default function LiquidButton({
                     </p>
                     
                     <button 
-                      onClick={() => window.open('https://t.me/Idk_friends', '_blank')}
+                      onClick={() => {
+                        soundManager.play('buy', 0.5);
+                        window.open('https://t.me/Idk_friends', '_blank');
+                      }}
+                      onMouseEnter={() => soundManager.play('hover', 0.2)}
                       className="w-full py-4 bg-[#2AABEE] hover:bg-[#229ED9] text-white rounded-xl font-bold transition-all flex items-center justify-center gap-3"
                     >
                       <Send size={20} /> Я оплатил, скинуть чек
@@ -275,6 +344,7 @@ export default function LiquidButton({
     <>
       <button 
         onClick={handleOpen}
+        onMouseEnter={() => soundManager.play('hover', 0.3)}
         className="relative w-full h-14 overflow-hidden rounded-2xl group bg-[#050505] border border-white/10 transition-all duration-500 hover:border-transparent hover:shadow-[0_0_40px_var(--theme-glow)] active:scale-95"
       >
         {/* Background Fill Animation (Slides in from left) */}

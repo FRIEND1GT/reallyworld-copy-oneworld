@@ -7,6 +7,7 @@ import BlockTransition from './components/BlockTransition';
 import BotCheck from './components/BotCheck';
 import SettingsPanel from './components/SettingsPanel';
 import FPSCounter from './components/FPSCounter';
+import IdleOverlay from './components/IdleOverlay';
 import HomePage from './pages/HomePage';
 import DonatePage from './pages/DonatePage';
 import ContactsPage from './pages/ContactsPage';
@@ -65,6 +66,7 @@ function AppContent() {
             
             <ThemeSwitcher />
             <SettingsPanel />
+            <IdleOverlay />
 
             <div className="relative z-10 flex flex-col min-h-screen">
               <header className="p-4 sm:p-6 flex justify-between items-center relative z-40">
@@ -130,7 +132,11 @@ function ThemeSwitcher() {
         )}
       </AnimatePresence>
       <button 
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          soundManager.play('click', 0.5);
+          setIsOpen(!isOpen);
+        }}
+        onMouseEnter={() => soundManager.play('hover', 0.2)}
         className="w-12 h-12 rounded-full bg-[#0a0a0a]/80 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/5 transition-all shadow-lg hover:shadow-[0_0_20px_var(--theme-glow)]"
       >
         <Palette size={20} className="transition-colors duration-500" style={{ color: isOpen ? 'var(--theme-main)' : 'inherit' }} />
@@ -143,6 +149,7 @@ function NavButton({ active, onClick, icon, text }: { active: boolean, onClick: 
   return (
     <button
       onClick={onClick}
+      onMouseEnter={() => !active && soundManager.play('hover', 0.2)}
       className={`relative flex items-center gap-3 px-6 py-3 rounded-xl transition-all duration-500 overflow-hidden group ${
         active 
           ? 'text-white shadow-[0_0_30px_var(--theme-glow)]' 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { ShieldAlert, Copy, Check, Sparkles } from 'lucide-react';
+import { ShieldAlert, Copy, Check, Sparkles, BookOpen } from 'lucide-react';
 
 export default function HomePage() {
   const [copied, setCopied] = useState(false);
@@ -13,12 +13,12 @@ export default function HomePage() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -40, scale: 0.95 }}
-      transition={{ type: "spring", stiffness: 150, damping: 25 }}
+      initial={{ opacity: 0, y: 50, scale: 0.95, rotateX: -10 }}
+      animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+      exit={{ opacity: 0, y: -50, scale: 0.95, rotateX: 10 }}
+      transition={{ type: "spring", stiffness: 150, damping: 20 }}
       className="flex flex-col items-center text-center max-w-5xl w-full gap-10 relative z-10 will-change-transform"
-      style={{ transform: 'translate3d(calc(var(--mouse-x, 0) * -1.5px), calc(var(--mouse-y, 0) * -1.5px), 0)', transition: 'transform 0.1s ease-out' }}
+      style={{ perspective: 1000, transform: 'translate3d(calc(var(--mouse-x, 0) * -1.5px), calc(var(--mouse-y, 0) * -1.5px), 0)', transition: 'transform 0.1s ease-out' }}
     >
       <motion.div 
         animate={{ y: [-4, 4, -4] }}
@@ -69,22 +69,41 @@ export default function HomePage() {
         initial={{ y: 30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 200, damping: 20, delay: 0.4 }}
-        className="mt-4 relative group"
+        className="mt-4 flex flex-col sm:flex-row gap-6 relative group"
       >
-        <div className="absolute -inset-1 bg-gradient-to-r from-[var(--theme-main)] to-[var(--theme-sec)] rounded-[2rem] blur-xl opacity-50 group-hover:opacity-100 transition duration-500 group-hover:duration-200"></div>
-        <button 
-          onClick={copyIp} 
-          className="relative flex items-center justify-center gap-4 px-14 py-6 rounded-[2rem] bg-[#0a0a0a] border border-white/10 text-white font-display font-black text-xl md:text-2xl transition-all duration-500 hover:scale-[1.02] overflow-hidden"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-[var(--theme-main)]/20 to-[var(--theme-sec)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          
-          <span className="relative z-10 flex items-center gap-4">
-            {copied ? <Check size={32} className="text-emerald-400" /> : <Copy size={32} className="text-[var(--theme-main)]" />}
-            <span className="tracking-widest uppercase text-transparent bg-clip-text bg-gradient-to-r from-white to-white/80">
-              {copied ? 'IP СКОПИРОВАН' : 'НАЧАТЬ ИГРАТЬ'}
+        <div className="relative group/btn1">
+          <div className="absolute -inset-1 bg-gradient-to-r from-[var(--theme-main)] to-[var(--theme-sec)] rounded-[2rem] blur-xl opacity-50 group-hover/btn1:opacity-100 transition duration-500 group-hover/btn1:duration-200"></div>
+          <button 
+            onClick={copyIp} 
+            className="relative flex items-center justify-center gap-4 px-10 py-5 rounded-[2rem] bg-[#0a0a0a] border border-white/10 text-white font-display font-black text-xl transition-all duration-500 hover:scale-[1.02] overflow-hidden w-full sm:w-auto"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-[var(--theme-main)]/20 to-[var(--theme-sec)]/20 opacity-0 group-hover/btn1:opacity-100 transition-opacity duration-500"></div>
+            
+            <span className="relative z-10 flex items-center gap-4">
+              {copied ? <Check size={28} className="text-emerald-400" /> : <Copy size={28} className="text-[var(--theme-main)]" />}
+              <span className="tracking-widest uppercase text-transparent bg-clip-text bg-gradient-to-r from-white to-white/80">
+                {copied ? 'IP СКОПИРОВАН' : 'НАЧАТЬ ИГРАТЬ'}
+              </span>
             </span>
-          </span>
-        </button>
+          </button>
+        </div>
+
+        <div className="relative group/btn2">
+          <div className="absolute -inset-1 bg-white/10 rounded-[2rem] blur-xl opacity-0 group-hover/btn2:opacity-100 transition duration-500"></div>
+          <a 
+            href="https://oneworld-rules.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative flex items-center justify-center gap-4 px-10 py-5 rounded-[2rem] bg-white/5 border border-white/10 text-white font-display font-black text-xl transition-all duration-500 hover:scale-[1.02] hover:bg-white/10 overflow-hidden w-full sm:w-auto"
+          >
+            <span className="relative z-10 flex items-center gap-3">
+              <BookOpen size={28} className="text-white/70" />
+              <span className="tracking-widest uppercase text-white/90">
+                ПРАВИЛА
+              </span>
+            </span>
+          </a>
+        </div>
       </motion.div>
 
       <motion.div 

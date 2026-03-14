@@ -80,6 +80,7 @@ export default function BotCheck({ onComplete }: { onComplete: () => void, key?:
                 {/* Checkmark (Correct) */}
                 <button
                   onClick={handleSuccess}
+                  onMouseEnter={() => soundManager.play('hover', 0.2)}
                   className="absolute w-16 h-16 bg-white/5 hover:bg-emerald-500/20 border border-white/10 hover:border-emerald-500 rounded-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] text-white/30 hover:text-emerald-400 group"
                   style={{ left: `${positions[0].x}%`, top: `${positions[0].y}%` }}
                 >
@@ -89,6 +90,7 @@ export default function BotCheck({ onComplete }: { onComplete: () => void, key?:
                 {/* Cross 1 (Wrong) */}
                 <button
                   onClick={handleFail}
+                  onMouseEnter={() => soundManager.play('hover', 0.2)}
                   className="absolute w-16 h-16 bg-white/5 hover:bg-red-500/20 border border-white/10 hover:border-red-500 rounded-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-[0_0_30px_rgba(239,68,68,0.3)] text-white/30 hover:text-red-400 group"
                   style={{ left: `${positions[1].x}%`, top: `${positions[1].y}%` }}
                 >
@@ -98,6 +100,7 @@ export default function BotCheck({ onComplete }: { onComplete: () => void, key?:
                 {/* Cross 2 (Wrong) */}
                 <button
                   onClick={handleFail}
+                  onMouseEnter={() => soundManager.play('hover', 0.2)}
                   className="absolute w-16 h-16 bg-white/5 hover:bg-red-500/20 border border-white/10 hover:border-red-500 rounded-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-[0_0_30px_rgba(239,68,68,0.3)] text-white/30 hover:text-red-400 group"
                   style={{ left: `${positions[2].x}%`, top: `${positions[2].y}%` }}
                 >
