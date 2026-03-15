@@ -6,12 +6,13 @@ import LavaBackground from './components/LavaBackground';
 import BlockTransition from './components/BlockTransition';
 import BotCheck from './components/BotCheck';
 import SettingsPanel from './components/SettingsPanel';
-import FPSCounter from './components/FPSCounter';
 import IdleOverlay from './components/IdleOverlay';
 import HomePage from './pages/HomePage';
 import DonatePage from './pages/DonatePage';
 import ContactsPage from './pages/ContactsPage';
 import OnlinePage from './pages/OnlinePage';
+import CookieConsent from './components/CookieConsent';
+import PolicyModal from './components/PolicyModal';
 import { ThemeProvider, useTheme, themes } from './ThemeContext';
 import { SettingsProvider } from './SettingsContext';
 import { soundManager } from './utils/sound';
@@ -22,6 +23,7 @@ function AppContent() {
   const [targetPage, setTargetPage] = useState('home');
   const [isTransitioning, setIsTransitioning] = useState(true);
   const [online, setOnline] = useState(0); // Server is closed
+  const [isPolicyOpen, setIsPolicyOpen] = useState(false);
 
   useEffect(() => {
     if (!isVerified) return;
@@ -49,7 +51,6 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white font-sans overflow-hidden relative selection:bg-[var(--theme-main)]/30 selection:text-[var(--theme-main)]">
-      {isVerified && <FPSCounter />}
       <AnimatePresence mode="wait">
         {!isVerified ? (
           <BotCheck key="bot-check" onComplete={() => setIsVerified(true)} />
@@ -67,16 +68,19 @@ function AppContent() {
             <ThemeSwitcher />
             <SettingsPanel />
             <IdleOverlay />
+            <CookieConsent />
+            <PolicyModal isOpen={isPolicyOpen} onClose={() => setIsPolicyOpen(false)} />
 
             <div className="relative z-10 flex flex-col min-h-screen">
               <header className="p-4 sm:p-6 flex justify-between items-center relative z-40">
                 <motion.div 
-                  animate={{ y: [-2, 2, -2] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="hidden lg:flex items-center gap-3 px-6 py-3 rounded-2xl bg-[#0a0a0a]/80 border border-white/10 backdrop-blur-xl shadow-[0_0_30px_rgba(0,0,0,0.5)]"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="hidden lg:flex items-center gap-3 px-6 py-3"
                 >
-                  <Crown size={20} className="text-[var(--theme-main)] transition-colors duration-500 animate-pulse" />
-                  <span className="text-sm font-medium text-white/70 tracking-widest uppercase">Онлайн: <span className="font-black text-white ml-1">{online.toLocaleString()}</span></span>
+                  <h1 className="text-2xl font-display font-black tracking-widest uppercase text-transparent bg-clip-text bg-gradient-to-r from-white to-white/50 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                    ONE WORLD
+                  </h1>
                 </motion.div>
 
                 <nav className="flex gap-2 bg-[#0a0a0a]/80 p-2 rounded-[1.5rem] border border-white/10 backdrop-blur-xl mx-auto lg:mx-0 shadow-[0_0_40px_rgba(0,0,0,0.5)] overflow-x-auto max-w-full no-scrollbar relative">
@@ -86,7 +90,14 @@ function AppContent() {
                   <NavButton active={currentPage === 'contacts'} onClick={() => handleNav('contacts')} icon={<MessageCircle size={18} />} text="Контакты" />
                 </nav>
 
-                <div className="hidden lg:block w-[180px]"></div>
+                <motion.div 
+                  animate={{ y: [-2, 2, -2] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  className="hidden lg:flex items-center gap-3 px-6 py-3 rounded-2xl bg-[#0a0a0a]/80 border border-white/10 backdrop-blur-xl shadow-[0_0_30px_rgba(0,0,0,0.5)]"
+                >
+                  <Crown size={20} className="text-[var(--theme-main)] transition-colors duration-500 animate-pulse" />
+                  <span className="text-sm font-medium text-white/70 tracking-widest uppercase">Онлайн: <span className="font-black text-white ml-1">{online.toLocaleString()}</span></span>
+                </motion.div>
               </header>
 
               <main className="flex-grow flex flex-col items-center justify-center p-6 relative z-10">
@@ -97,6 +108,18 @@ function AppContent() {
                   {currentPage === 'contacts' && <ContactsPage key="contacts" />}
                 </AnimatePresence>
               </main>
+
+              <footer className="w-full flex justify-center pb-6 relative z-10">
+                <button 
+                  onClick={() => {
+                    soundManager.play('click', 0.5);
+                    setIsPolicyOpen(true);
+                  }}
+                  className="text-white/20 hover:text-white/50 text-xs font-medium uppercase tracking-widest transition-colors duration-300"
+                >
+                  Правила и политика сайта
+                </button>
+              </footer>
             </div>
           </motion.div>
         )}

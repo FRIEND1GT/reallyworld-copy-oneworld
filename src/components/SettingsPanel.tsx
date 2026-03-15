@@ -87,13 +87,6 @@ export default function SettingsPanel() {
                   checked={enableBlur} 
                   onChange={setEnableBlur} 
                 />
-                <ToggleItem 
-                  icon={<Cpu />} 
-                  title="Счетчик FPS" 
-                  description="Показывать кадры в секунду" 
-                  checked={showFPS} 
-                  onChange={setShowFPS} 
-                />
               </div>
 
               <div className="p-4 bg-[var(--theme-main)]/10 border border-[var(--theme-main)]/20 rounded-xl flex flex-col gap-3">

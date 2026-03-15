@@ -28,70 +28,73 @@ class SoundManager {
       switch (type) {
         case 'click':
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(600, t);
-          osc.frequency.exponentialRampToValueAtTime(300, t + 0.1);
-          gain.gain.setValueAtTime(volume, t);
+          osc.frequency.setValueAtTime(400, t);
+          osc.frequency.exponentialRampToValueAtTime(300, t + 0.15);
+          gain.gain.setValueAtTime(0, t);
+          gain.gain.linearRampToValueAtTime(volume, t + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
+          osc.start(t);
+          osc.stop(t + 0.15);
+          break;
+        case 'hover':
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(300, t);
+          gain.gain.setValueAtTime(0, t);
+          gain.gain.linearRampToValueAtTime(volume * 0.05, t + 0.05);
           gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
           osc.start(t);
           osc.stop(t + 0.1);
           break;
-        case 'hover':
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(800, t);
-          gain.gain.setValueAtTime(volume * 0.1, t);
-          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
-          osc.start(t);
-          osc.stop(t + 0.05);
-          break;
         case 'transition':
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(100, t);
-          osc.frequency.exponentialRampToValueAtTime(10, t + 0.5);
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(200, t);
+          osc.frequency.exponentialRampToValueAtTime(150, t + 0.8);
           gain.gain.setValueAtTime(0, t);
-          gain.gain.linearRampToValueAtTime(volume * 0.3, t + 0.2);
+          gain.gain.linearRampToValueAtTime(volume * 0.15, t + 0.4);
+          gain.gain.linearRampToValueAtTime(0, t + 0.8);
+          osc.start(t);
+          osc.stop(t + 0.8);
+          break;
+        case 'success':
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(329.63, t); // E4
+          osc.frequency.setValueAtTime(415.30, t + 0.15); // G#4
+          gain.gain.setValueAtTime(0, t);
+          gain.gain.linearRampToValueAtTime(volume * 0.6, t + 0.1);
+          gain.gain.setValueAtTime(volume * 0.6, t + 0.15);
           gain.gain.linearRampToValueAtTime(0, t + 0.5);
           osc.start(t);
           osc.stop(t + 0.5);
           break;
-        case 'success':
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(440, t); // A4
-          osc.frequency.setValueAtTime(554.37, t + 0.1); // C#5
-          gain.gain.setValueAtTime(0, t);
-          gain.gain.linearRampToValueAtTime(volume, t + 0.05);
-          gain.gain.setValueAtTime(volume, t + 0.1);
-          gain.gain.linearRampToValueAtTime(0, t + 0.3);
-          osc.start(t);
-          osc.stop(t + 0.3);
-          break;
         case 'error':
-          osc.type = 'square';
-          osc.frequency.setValueAtTime(150, t);
-          osc.frequency.setValueAtTime(100, t + 0.15);
-          gain.gain.setValueAtTime(volume * 0.3, t);
-          gain.gain.setValueAtTime(0, t + 0.1);
-          gain.gain.setValueAtTime(volume * 0.3, t + 0.15);
-          gain.gain.linearRampToValueAtTime(0, t + 0.3);
-          osc.start(t);
-          osc.stop(t + 0.3);
-          break;
-        case 'buy':
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(880, t);
-          osc.frequency.setValueAtTime(1760, t + 0.1);
-          gain.gain.setValueAtTime(volume, t);
-          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.4);
+          osc.frequency.setValueAtTime(150, t);
+          osc.frequency.exponentialRampToValueAtTime(100, t + 0.4);
+          gain.gain.setValueAtTime(0, t);
+          gain.gain.linearRampToValueAtTime(volume * 0.3, t + 0.1);
+          gain.gain.linearRampToValueAtTime(0, t + 0.4);
           osc.start(t);
           osc.stop(t + 0.4);
           break;
-        case 'cancel':
+        case 'buy':
           osc.type = 'triangle';
-          osc.frequency.setValueAtTime(400, t);
-          osc.frequency.exponentialRampToValueAtTime(200, t + 0.2);
-          gain.gain.setValueAtTime(volume, t);
-          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
+          osc.frequency.setValueAtTime(523.25, t); // C5
+          osc.frequency.setValueAtTime(659.25, t + 0.15); // E5
+          gain.gain.setValueAtTime(0, t);
+          gain.gain.linearRampToValueAtTime(volume * 0.7, t + 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.6);
           osc.start(t);
-          osc.stop(t + 0.2);
+          osc.stop(t + 0.6);
+          break;
+        case 'cancel':
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(300, t);
+          osc.frequency.exponentialRampToValueAtTime(200, t + 0.3);
+          gain.gain.setValueAtTime(0, t);
+          gain.gain.linearRampToValueAtTime(volume * 0.5, t + 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
+          osc.start(t);
+          osc.stop(t + 0.3);
           break;
       }
     } catch (e) {

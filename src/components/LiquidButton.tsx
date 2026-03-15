@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShoppingCart, Check, X, User, CreditCard, Send, Mail, ArrowRight, Copy, Shield } from 'lucide-react';
+import { ShoppingCart, Check, X, User, CreditCard, Send, Mail, ArrowRight, Copy, Shield, ShieldAlert } from 'lucide-react';
 import { soundManager } from '../utils/sound';
+import { useCountry } from '../hooks/useCountry';
 
 export default function LiquidButton({ 
   price, 
@@ -17,8 +18,9 @@ export default function LiquidButton({
 }) {
   const [showModal, setShowModal] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const country = useCountry();
   
-  const [step, setStep] = useState<number | 'tg_success'>(0);
+  const [step, setStep] = useState<number | 'tg_success' | 'blocked'>(0);
   const [nickname, setNickname] = useState('');
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,6 +42,11 @@ export default function LiquidButton({
   const handleOpen = (e: React.MouseEvent) => {
     e.preventDefault();
     soundManager.play('click', 0.5);
+    if (country === 'RU') {
+      setStep('blocked');
+    } else {
+      setStep(0);
+    }
     setShowModal(true);
   };
 
@@ -113,6 +120,26 @@ export default function LiquidButton({
             <div className="relative z-10 w-full">
               <AnimatePresence mode="wait">
                 
+                {/* BLOCKED STEP */}
+                {step === 'blocked' && (
+                  <motion.div key="blocked" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center text-center py-6">
+                    <div className="w-24 h-24 bg-red-500/10 border border-red-500/20 rounded-full flex items-center justify-center mb-8">
+                      <ShieldAlert size={48} className="text-red-500" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-4">Доступ ограничен</h3>
+                    <p className="text-white/60 mb-10 text-lg">
+                      Извините, но на вашей территории эта функция заблокирована.
+                    </p>
+                    <button 
+                      onClick={handleClose}
+                      onMouseEnter={() => soundManager.play('hover', 0.2)}
+                      className="w-full py-4 bg-white/5 hover:bg-white/10 text-white rounded-xl font-bold transition-all flex items-center justify-center"
+                    >
+                      Закрыть
+                    </button>
+                  </motion.div>
+                )}
+
                 {/* STEP 0: AGREEMENT */}
                 {step === 0 && (
                   <motion.div key="step0" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="flex flex-col">

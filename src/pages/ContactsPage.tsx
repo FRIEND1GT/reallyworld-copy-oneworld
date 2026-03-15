@@ -1,8 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Send, MessageSquare, Mail, Globe, MapPin, Phone } from 'lucide-react';
+import { Send, MessageSquare, Mail, Globe, MapPin, Phone, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export default function ContactsPage() {
+  const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setFormStatus('submitting');
+    
+    const formData = new FormData(e.currentTarget);
+    formData.append("access_key", "6b6c9d34-560e-43a2-93a8-d6579ceadc7a");
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setFormStatus('success');
+        (e.target as HTMLFormElement).reset();
+        setTimeout(() => setFormStatus('idle'), 5000);
+      } else {
+        setFormStatus('error');
+        setTimeout(() => setFormStatus('idle'), 5000);
+      }
+    } catch (error) {
+      setFormStatus('error');
+      setTimeout(() => setFormStatus('idle'), 5000);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 50, scale: 0.95, rotateX: -10 }}
@@ -59,38 +90,76 @@ export default function ContactsPage() {
           </div>
         </motion.div>
 
-        {/* FAQ / Info */}
+        {/* Contact Form */}
         <motion.div 
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
-          className="flex flex-col gap-6"
+          className="bg-[#0a0a0a]/80 border border-white/10 rounded-[2rem] p-8 backdrop-blur-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] flex flex-col relative overflow-hidden"
         >
-          <FaqCard 
-            question="Как купить донат?" 
-            answer="Вы можете приобрести донат через наш магазин на сайте или написав напрямую создателю в Telegram для индивидуальных предложений."
-          />
-          <FaqCard 
-            question="Когда открытие сервера?" 
-            answer="Сервер находится в активной разработке. Следите за новостями в наших социальных сетях, чтобы не пропустить запуск нового сезона!"
-          />
-          <FaqCard 
-            question="Как стать частью команды?" 
-            answer="Мы всегда ищем талантливых строителей, модераторов и разработчиков. Оставьте заявку в нашем Discord сервере."
-          />
+          <div className="absolute inset-0 bg-gradient-to-br from-[var(--theme-main)]/5 to-transparent opacity-50 pointer-events-none" />
           
-          <div className="bg-[#0a0a0a]/80 border border-white/10 rounded-[2rem] p-8 backdrop-blur-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] mt-auto relative overflow-hidden group">
-             <div className="absolute inset-0 bg-gradient-to-br from-[var(--theme-main)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-             <div className="relative z-10 flex items-center gap-6">
-                <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500 shadow-inner text-[var(--theme-main)]">
-                  <MessageSquare size={32} className="drop-shadow-[0_0_10px_currentColor]" />
-                </div>
-                <div>
-                  <h4 className="text-xl font-display font-black text-white mb-1">Сотрудничество</h4>
-                  <p className="text-white/50 text-sm font-medium">Для ютуберов и стримеров</p>
-                </div>
-             </div>
-          </div>
+          <h3 className="text-3xl font-display font-black text-white mb-2 drop-shadow-md relative z-10">ОБРАТНАЯ СВЯЗЬ</h3>
+          <p className="text-white/50 text-sm mb-6 relative z-10">Напишите о проблеме, оставьте отзыв или сообщите о баге, и мы его исправим.</p>
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4 relative z-10 flex-grow">
+            <input type="hidden" name="subject" value="One World" />
+            <input type="hidden" name="from_name" value="One World" />
+            <div>
+              <input 
+                type="text" 
+                name="name" 
+                required 
+                placeholder="Ваше имя" 
+                className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--theme-main)]/50 transition-colors"
+              />
+            </div>
+            <div>
+              <input 
+                type="email" 
+                name="email" 
+                required 
+                placeholder="Ваш Email" 
+                className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--theme-main)]/50 transition-colors"
+              />
+            </div>
+            <div className="flex-grow">
+              <textarea 
+                name="message" 
+                required 
+                placeholder="Сообщение..." 
+                className="w-full h-full min-h-[120px] bg-[#050505] border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[var(--theme-main)]/50 transition-colors resize-none"
+              ></textarea>
+            </div>
+            
+            <button 
+              type="submit" 
+              disabled={formStatus === 'submitting'}
+              className="mt-2 relative flex items-center justify-center gap-3 w-full py-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold tracking-widest uppercase text-sm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group"
+            >
+              {formStatus === 'idle' && (
+                <>
+                  <Mail size={18} className="text-[var(--theme-main)] group-hover:scale-110 transition-transform" />
+                  <span>Отправить</span>
+                </>
+              )}
+              {formStatus === 'submitting' && (
+                <span className="animate-pulse">Отправка...</span>
+              )}
+              {formStatus === 'success' && (
+                <>
+                  <CheckCircle2 size={18} className="text-emerald-500" />
+                  <span className="text-emerald-500">Отправлено!</span>
+                </>
+              )}
+              {formStatus === 'error' && (
+                <>
+                  <AlertCircle size={18} className="text-red-500" />
+                  <span className="text-red-500">Ошибка отправки</span>
+                </>
+              )}
+            </button>
+          </form>
         </motion.div>
       </div>
     </motion.div>

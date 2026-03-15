@@ -5,8 +5,6 @@ interface SettingsContextType {
   setEnableShaders: (v: boolean) => void;
   enableBlur: boolean;
   setEnableBlur: (v: boolean) => void;
-  showFPS: boolean;
-  setShowFPS: (v: boolean) => void;
   enableAnimations: boolean;
   setEnableAnimations: (v: boolean) => void;
   isMobile: boolean;
@@ -18,7 +16,6 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [enableShaders, setEnableShaders] = useState(true);
   const [enableBlur, setEnableBlur] = useState(true);
-  const [showFPS, setShowFPS] = useState(false);
   const [enableAnimations, setEnableAnimations] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -33,7 +30,6 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         const parsed = JSON.parse(saved);
         setEnableShaders(parsed.enableShaders ?? true);
         setEnableBlur(parsed.enableBlur ?? true);
-        setShowFPS(parsed.showFPS ?? false);
         setEnableAnimations(parsed.enableAnimations ?? true);
       } catch (e) {}
     } else if (mobileCheck) {
@@ -45,7 +41,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('app-settings', JSON.stringify({ enableShaders, enableBlur, showFPS, enableAnimations }));
+    localStorage.setItem('app-settings', JSON.stringify({ enableShaders, enableBlur, enableAnimations }));
     
     const root = document.documentElement;
     if (!enableBlur) root.classList.add('disable-blur');
@@ -53,20 +49,18 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
     if (!enableAnimations) root.classList.add('disable-animations');
     else root.classList.remove('disable-animations');
-  }, [enableShaders, enableBlur, showFPS, enableAnimations]);
+  }, [enableShaders, enableBlur, enableAnimations]);
 
   const optimizeAll = () => {
     setEnableShaders(false);
     setEnableBlur(false);
     setEnableAnimations(false);
-    setShowFPS(true);
   };
 
   return (
     <SettingsContext.Provider value={{ 
       enableShaders, setEnableShaders, 
       enableBlur, setEnableBlur, 
-      showFPS, setShowFPS,
       enableAnimations, setEnableAnimations,
       isMobile,
       optimizeAll
