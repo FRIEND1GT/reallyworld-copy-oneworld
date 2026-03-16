@@ -8,18 +8,18 @@
       body {
         margin: 0;
         background-color: #050505;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
         font-family: system-ui, -apple-system, sans-serif;
-        overflow: hidden;
       }
       .initial-loader {
+        position: fixed;
+        inset: 0;
         display: flex;
         flex-direction: column;
+        justify-content: center;
         align-items: center;
         gap: 24px;
+        background-color: #050505;
+        z-index: 9999;
       }
       .loader-spinner {
         width: 48px;
