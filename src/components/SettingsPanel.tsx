@@ -3,6 +3,7 @@ import { Settings, X, Monitor, Cpu, Eye, Zap, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useSettings } from '../SettingsContext';
 import { soundManager } from '../utils/sound';
+import { useAchievements } from '../AchievementsContext';
 
 export default function SettingsPanel() {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,20 +14,24 @@ export default function SettingsPanel() {
     enableAnimations, setEnableAnimations,
     optimizeAll
   } = useSettings();
+  const { unlockAchievement } = useAchievements();
 
   const handleOpen = () => {
     soundManager.play('click', 0.5);
     setIsOpen(true);
+    unlockAchievement('settings');
   };
 
   const handleClose = () => {
     soundManager.play('click', 0.5);
     setIsOpen(false);
+    unlockAchievement('close_modal');
   };
 
   const handleOptimize = () => {
     soundManager.play('success', 0.5);
     optimizeAll();
+    unlockAchievement('optimize');
   };
 
   return (

@@ -1,9 +1,34 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, FileText } from 'lucide-react';
 import { soundManager } from '../utils/sound';
+import { useAchievements } from '../AchievementsContext';
 
 export default function PolicyModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
+  const { unlockAchievement } = useAchievements();
+  const [openTime, setOpenTime] = useState<number>(0);
+
+  useEffect(() => {
+    if (isOpen) {
+      unlockAchievement('policy');
+      setOpenTime(Date.now());
+    }
+  }, [isOpen, unlockAchievement]);
+
+  const handleClose = () => {
+    soundManager.play('cancel', 0.4);
+    if (openTime > 0) {
+      const timeSpent = Date.now() - openTime;
+      if (timeSpent < 2000) {
+        unlockAchievement('fast_read');
+      } else if (timeSpent > 60000) {
+        unlockAchievement('slow_read');
+      }
+    }
+    unlockAchievement('close_modal');
+    onClose();
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -21,10 +46,7 @@ export default function PolicyModal({ isOpen, onClose }: { isOpen: boolean, onCl
             className="bg-[#0a0a0a] border border-white/10 p-6 sm:p-8 rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.8)] flex flex-col w-full max-w-2xl relative overflow-hidden max-h-[85vh]"
           >
             <button 
-              onClick={() => {
-                soundManager.play('cancel', 0.4);
-                onClose();
-              }}
+              onClick={handleClose}
               className="absolute top-6 right-6 p-2 text-white/40 hover:text-white hover:bg-white/5 rounded-full transition-colors z-20"
             >
               <X size={24} />
@@ -73,7 +95,7 @@ export default function PolicyModal({ isOpen, onClose }: { isOpen: boolean, onCl
               <button 
                 onClick={() => {
                   soundManager.play('click', 0.5);
-                  onClose();
+                  handleClose();
                 }}
                 onMouseEnter={() => soundManager.play('hover', 0.2)}
                 className="w-full py-4 bg-white/5 hover:bg-white/10 text-white rounded-xl font-bold transition-all flex items-center justify-center uppercase tracking-widest text-sm"

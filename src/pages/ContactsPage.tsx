@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Send, MessageSquare, Mail, Globe, MapPin, Phone, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Send, MessageSquare, Mail, Globe, MapPin, Phone, CheckCircle2, AlertCircle, Youtube } from 'lucide-react';
+import { useAchievements } from '../AchievementsContext';
 
 export default function ContactsPage() {
   const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const { unlockAchievement } = useAchievements();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -68,9 +70,34 @@ export default function ContactsPage() {
             </p>
 
             <div className="flex flex-col gap-6">
-              <ContactItem icon={<Send />} title="Telegram" value="@idk_friends" link="https://t.me/Idk_friends" />
-              <ContactItem icon={<MessageSquare />} title="Discord (Личный)" value="@idkfriends" link="https://discordapp.com/users/idkfriends" />
-              <ContactItem icon={<Globe />} title="Discord Сервер" value="Присоединиться" link="https://discord.gg/CqzckKfV" />
+              <ContactItem 
+                icon={<Send />} 
+                title="Telegram" 
+                value="@idk_friends" 
+                link="https://t.me/Idk_friends" 
+                onClick={() => unlockAchievement('telegram_join')}
+              />
+              <ContactItem 
+                icon={<MessageSquare />} 
+                title="Discord (Личный)" 
+                value="@idkfriends" 
+                link="https://discordapp.com/users/idkfriends" 
+                onClick={() => unlockAchievement('discord_join')}
+              />
+              <ContactItem 
+                icon={<Globe />} 
+                title="Discord Сервер" 
+                value="Присоединиться" 
+                link="https://discord.gg/CqzckKfV" 
+                onClick={() => unlockAchievement('discord_join')}
+              />
+              <ContactItem 
+                icon={<Youtube />} 
+                title="YouTube" 
+                value="O_M_G_YT" 
+                link="https://www.youtube.com/@friend1gt" 
+                onClick={() => unlockAchievement('youtube_sub')}
+              />
             </div>
           </div>
 
@@ -80,6 +107,7 @@ export default function ContactsPage() {
               target="_blank" 
               rel="noopener noreferrer"
               className="block w-full"
+              onClick={() => unlockAchievement('telegram_join')}
             >
               <button className="relative flex items-center justify-center gap-3 w-full py-5 rounded-xl bg-gradient-to-r from-[var(--theme-main)] to-[var(--theme-sec)] text-white font-bold tracking-widest uppercase text-sm transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_30px_var(--theme-glow)] overflow-hidden group">
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
@@ -166,9 +194,9 @@ export default function ContactsPage() {
   );
 }
 
-function ContactItem({ icon, title, value, link }: { icon: React.ReactNode, title: string, value: string, link: string }) {
+function ContactItem({ icon, title, value, link, onClick }: { icon: React.ReactNode, title: string, value: string, link: string, onClick?: () => void }) {
   return (
-    <a href={link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-5 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 transition-all group">
+    <a href={link} target="_blank" rel="noopener noreferrer" onClick={onClick} className="flex items-center gap-5 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 transition-all group">
       <div className="w-12 h-12 rounded-xl bg-[#050505] border border-white/10 flex items-center justify-center text-[var(--theme-main)] group-hover:scale-110 group-hover:shadow-[0_0_15px_var(--theme-glow)] transition-all duration-500">
         {icon}
       </div>

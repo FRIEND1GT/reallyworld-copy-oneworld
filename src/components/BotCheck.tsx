@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Check, X, AlertTriangle, RefreshCw, Clock } from 'lucide-react';
 import { soundManager } from '../utils/sound';
+import { useAchievements } from '../AchievementsContext';
 
 export default function BotCheck({ onComplete }: { onComplete: () => void, key?: React.Key }) {
   const [failed, setFailed] = useState(false);
@@ -9,6 +10,7 @@ export default function BotCheck({ onComplete }: { onComplete: () => void, key?:
   const [attempts, setAttempts] = useState(0);
   const [banUntil, setBanUntil] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState<number>(0);
+  const { unlockAchievement } = useAchievements();
 
   useEffect(() => {
     const savedAttempts = parseInt(localStorage.getItem('botcheck_attempts') || '0', 10);
@@ -57,11 +59,13 @@ export default function BotCheck({ onComplete }: { onComplete: () => void, key?:
   const handleSuccess = () => {
     soundManager.play('success', 0.6);
     localStorage.removeItem('botcheck_attempts');
+    unlockAchievement('bot_pass');
     onComplete();
   };
 
   const handleFail = () => {
     soundManager.play('error', 0.6);
+    unlockAchievement('bot_fail');
     
     const newAttempts = attempts + 1;
     setAttempts(newAttempts);
@@ -71,6 +75,7 @@ export default function BotCheck({ onComplete }: { onComplete: () => void, key?:
       const banTime = Date.now() + 5 * 60 * 1000; // 5 minutes
       setBanUntil(banTime);
       localStorage.setItem('botcheck_ban_until', banTime.toString());
+      unlockAchievement('bot_ban');
     } else {
       setFailed(true);
     }

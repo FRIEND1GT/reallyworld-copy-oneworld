@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Home, ShoppingCart, MessageCircle, Crown, Palette, Users } from 'lucide-react';
+import { Home, ShoppingCart, MessageCircle, Crown, Palette, Users, Trophy } from 'lucide-react';
 
 import LavaBackground from './components/LavaBackground';
 import BlockTransition from './components/BlockTransition';
@@ -13,8 +13,11 @@ import ContactsPage from './pages/ContactsPage';
 import OnlinePage from './pages/OnlinePage';
 import CookieConsent from './components/CookieConsent';
 import PolicyModal from './components/PolicyModal';
+import IdeaGenerator from './components/IdeaGenerator';
+import AchievementsModal from './components/AchievementsModal';
 import { ThemeProvider, useTheme, themes } from './ThemeContext';
 import { SettingsProvider } from './SettingsContext';
+import { AchievementsProvider, useAchievements } from './AchievementsContext';
 import { soundManager } from './utils/sound';
 
 function AppContent() {
@@ -24,6 +27,7 @@ function AppContent() {
   const [isTransitioning, setIsTransitioning] = useState(true);
   const [online, setOnline] = useState(0); // Server is closed
   const [isPolicyOpen, setIsPolicyOpen] = useState(false);
+  const { unlockAchievement, setIsModalOpen } = useAchievements();
 
   useEffect(() => {
     if (!isVerified) return;
@@ -37,16 +41,41 @@ function AppContent() {
     };
     window.addEventListener('mousemove', handleMouseMove);
     
+    // Track clicks
+    let clickCount = parseInt(localStorage.getItem('click_count') || '0', 10);
+    const handleClick = () => {
+      clickCount++;
+      localStorage.setItem('click_count', clickCount.toString());
+      if (clickCount >= 10) unlockAchievement('click_10');
+      if (clickCount >= 100) unlockAchievement('click_100');
+      if (clickCount >= 500) unlockAchievement('click_500');
+    };
+    window.addEventListener('click', handleClick);
+
+    // Track scroll to bottom
+    const handleScroll = () => {
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
+        unlockAchievement('scroll_bottom');
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('click', handleClick);
+      window.removeEventListener('scroll', handleScroll);
     };
-  }, [isVerified]);
+  }, [isVerified, unlockAchievement]);
 
   const handleNav = (page: string) => {
     if (page === currentPage || isTransitioning) return;
     soundManager.play('click', 0.5);
     setTargetPage(page);
     setIsTransitioning(true);
+    
+    if (page === 'donate') unlockAchievement('nav_donate');
+    if (page === 'online') unlockAchievement('nav_online');
+    if (page === 'contacts') unlockAchievement('nav_contacts');
   };
 
   return (
@@ -69,6 +98,8 @@ function AppContent() {
             <SettingsPanel />
             <IdleOverlay />
             <CookieConsent />
+            <IdeaGenerator />
+            <AchievementsModal />
             <PolicyModal isOpen={isPolicyOpen} onClose={() => setIsPolicyOpen(false)} />
 
             <div className="relative z-10 flex flex-col min-h-screen">
@@ -76,7 +107,8 @@ function AppContent() {
                 <motion.div 
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="hidden lg:flex items-center gap-3 px-6 py-3"
+                  className="hidden lg:flex items-center gap-3 px-6 py-3 cursor-pointer"
+                  onClick={() => unlockAchievement('secret_click')}
                 >
                   <h1 className="text-2xl font-display font-black tracking-widest uppercase text-transparent bg-clip-text bg-gradient-to-r from-white to-white/50 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
                     ONE WORLD
@@ -95,6 +127,18 @@ function AppContent() {
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                   className="hidden lg:flex items-center gap-3 px-6 py-3 rounded-2xl bg-[#0a0a0a]/80 border border-white/10 backdrop-blur-xl shadow-[0_0_30px_rgba(0,0,0,0.5)]"
                 >
+                  <button
+                    onClick={() => {
+                      soundManager.play('click', 0.5);
+                      setIsModalOpen(true);
+                      unlockAchievement('achievements_open');
+                    }}
+                    onMouseEnter={() => soundManager.play('hover', 0.2)}
+                    className="mr-2 text-yellow-500 hover:text-yellow-400 transition-colors hover:scale-110"
+                    title="Ачивки"
+                  >
+                    <Trophy size={20} />
+                  </button>
                   <Crown size={20} className="text-[var(--theme-main)] transition-colors duration-500 animate-pulse" />
                   <span className="text-sm font-medium text-white/70 tracking-widest uppercase">Онлайн: <span className="font-black text-white ml-1">{online.toLocaleString()}</span></span>
                 </motion.div>
@@ -130,6 +174,7 @@ function AppContent() {
 
 function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
+  const { unlockAchievement } = useAchievements();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -145,7 +190,15 @@ function ThemeSwitcher() {
             {themes.map(t => (
               <button
                 key={t.id}
-                onClick={() => { setTheme(t.id); setIsOpen(false); }}
+                onClick={() => { 
+                  setTheme(t.id); 
+                  setIsOpen(false); 
+                  unlockAchievement('theme_change');
+                  
+                  let count = parseInt(localStorage.getItem('theme_changes') || '0', 10) + 1;
+                  localStorage.setItem('theme_changes', count.toString());
+                  if (count >= 10) unlockAchievement('theme_spam');
+                }}
                 className={`w-8 h-8 rounded-full border-2 transition-all hover:scale-110 ${theme.id === t.id ? 'border-white scale-110 shadow-[0_0_15px_var(--theme-glow)]' : 'border-transparent opacity-70 hover:opacity-100'}`}
                 style={{ background: `linear-gradient(135deg, ${t.main}, ${t.sec})` }}
                 title={t.name}
@@ -169,10 +222,18 @@ function ThemeSwitcher() {
 }
 
 function NavButton({ active, onClick, icon, text }: { active: boolean, onClick: () => void, icon: React.ReactNode, text: string }) {
+  const { unlockAchievement } = useAchievements();
+  
+  let hoverTimer: NodeJS.Timeout;
+  
   return (
     <button
       onClick={onClick}
-      onMouseEnter={() => !active && soundManager.play('hover', 0.2)}
+      onMouseEnter={() => {
+        if (!active) soundManager.play('hover', 0.2);
+        hoverTimer = setTimeout(() => unlockAchievement('hover_spam'), 500);
+      }}
+      onMouseLeave={() => clearTimeout(hoverTimer)}
       className={`relative flex items-center gap-3 px-6 py-3 rounded-xl transition-all duration-500 overflow-hidden group ${
         active 
           ? 'text-white shadow-[0_0_30px_var(--theme-glow)]' 
@@ -198,7 +259,9 @@ export default function App() {
   return (
     <ThemeProvider>
       <SettingsProvider>
-        <AppContent />
+        <AchievementsProvider>
+          <AppContent />
+        </AchievementsProvider>
       </SettingsProvider>
     </ThemeProvider>
   );

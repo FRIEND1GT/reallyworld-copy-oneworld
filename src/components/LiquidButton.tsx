@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ShoppingCart, Check, X, User, CreditCard, Send, Mail, ArrowRight, Copy, Shield, ShieldAlert } from 'lucide-react';
 import { soundManager } from '../utils/sound';
 import { useCountry } from '../hooks/useCountry';
+import { useAchievements } from '../AchievementsContext';
 
 export default function LiquidButton({ 
   price, 
@@ -19,6 +20,7 @@ export default function LiquidButton({
   const [showModal, setShowModal] = useState(false);
   const [mounted, setMounted] = useState(false);
   const country = useCountry();
+  const { unlockAchievement } = useAchievements();
   
   const [step, setStep] = useState<number | 'tg_success' | 'blocked'>(0);
   const [nickname, setNickname] = useState('');
@@ -48,6 +50,7 @@ export default function LiquidButton({
       setStep(0);
     }
     setShowModal(true);
+    unlockAchievement('buy_donate');
   };
 
   const handleClose = () => {

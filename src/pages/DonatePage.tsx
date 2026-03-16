@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Tag, Sparkles, Star, Shield, Zap, Swords, Flame, Skull, Ghost, Crown, Package, Gift, Box, Coins, Banknote, Gem } from 'lucide-react';
 import LiquidButton from '../components/LiquidButton';
-
+import { useAchievements } from '../AchievementsContext';
 import { soundManager } from '../utils/sound';
 
 const ranks = [
@@ -31,6 +31,7 @@ const currency = [
 export default function DonatePage() {
   const [activeTab, setActiveTab] = useState<'ranks' | 'cases' | 'currency'>('ranks');
   const [promoCode, setPromoCode] = useState('');
+  const { unlockAchievement } = useAchievements();
   
   const upperPromo = promoCode.toUpperCase();
   let discount = 1;
@@ -42,9 +43,18 @@ export default function DonatePage() {
   } else if (upperPromo === 'O_M_G') { 
     discount = 0.7; 
     discountText = '-30%'; 
+  } else if (upperPromo === 'LACKY') {
+    discount = 0.65;
+    discountText = '-35%';
   }
   
   const isPromoValid = discount < 1;
+
+  useEffect(() => {
+    if (isPromoValid) {
+      unlockAchievement('first_promo');
+    }
+  }, [isPromoValid, unlockAchievement]);
 
   const getItems = () => {
     switch(activeTab) {

@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Moon } from 'lucide-react';
 import { soundManager } from '../utils/sound';
+import { useAchievements } from '../AchievementsContext';
 
 export default function IdleOverlay() {
   const [isIdle, setIsIdle] = useState(false);
+  const { unlockAchievement } = useAchievements();
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
@@ -17,12 +19,14 @@ export default function IdleOverlay() {
       }
       timeout = setTimeout(() => {
         setIsIdle(true);
+        unlockAchievement('idle');
       }, 60000); // 60 секунд = 1 минута
     };
 
     // Инициализация таймера при загрузке
     timeout = setTimeout(() => {
       setIsIdle(true);
+      unlockAchievement('idle');
     }, 60000);
 
     const handleActivity = () => {

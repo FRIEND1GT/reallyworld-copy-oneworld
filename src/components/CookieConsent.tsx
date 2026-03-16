@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Cookie, X } from 'lucide-react';
 import { soundManager } from '../utils/sound';
+import { useAchievements } from '../AchievementsContext';
 
 export default function CookieConsent() {
   const [isVisible, setIsVisible] = useState(false);
+  const { unlockAchievement } = useAchievements();
 
   useEffect(() => {
     const consent = localStorage.getItem('cookie-consent');
@@ -19,6 +21,7 @@ export default function CookieConsent() {
     soundManager.play('success', 0.5);
     localStorage.setItem('cookie-consent', 'true');
     setIsVisible(false);
+    unlockAchievement('cookies');
   };
 
   return (

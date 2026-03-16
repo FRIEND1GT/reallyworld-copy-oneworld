@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { ShieldAlert, Copy, Check, Sparkles, BookOpen } from 'lucide-react';
+import { useAchievements } from '../AchievementsContext';
 
 export default function HomePage() {
   const [copied, setCopied] = useState(false);
+  const { unlockAchievement } = useAchievements();
 
   const copyIp = () => {
     navigator.clipboard.writeText('OneWorld.me');
     setCopied(true);
+    unlockAchievement('copy_ip');
     setTimeout(() => setCopied(false), 2000);
   };
 
